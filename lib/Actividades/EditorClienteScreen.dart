@@ -37,23 +37,7 @@ class _EditorClienteScreenState extends State<EditorClienteScreen> {
                   child: FloatingActionButton(
                     heroTag: 4,
                     onPressed: () async {
-                      AlertDialog alert = AlertDialog(
-                        content: Container(
-                          //width: 80,
-                          //height: 50,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 15),
-                            child: Row(
-                              children: [
-                                const CircularProgressIndicator(),
-                                Container(
-                                    margin: const EdgeInsets.only(left: 20),
-                                    child: const Text('Cargando...')),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      AlertDialog alert = RecursosEstaticos.alertDialogLoading;
                       if (widget.cliente.nombre.isNotEmpty &&
                           widget.cliente.apellidos.isNotEmpty) {
                         showDialog(
@@ -139,23 +123,7 @@ class _EditorClienteScreenState extends State<EditorClienteScreen> {
                   child: FloatingActionButton(
                     heroTag: 3,
                     onPressed: () async {
-                      AlertDialog alert = AlertDialog(
-                        content: Container(
-                          //width: 80,
-                          //height: 50,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 15),
-                            child: Row(
-                              children: [
-                                const CircularProgressIndicator(),
-                                Container(
-                                    margin: const EdgeInsets.only(left: 20),
-                                    child: const Text('Cargando...')),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      AlertDialog alert = RecursosEstaticos.alertDialogLoading;
                       showDialog(
                         barrierDismissible: false,
                         context: context,
@@ -211,23 +179,7 @@ class _EditorClienteScreenState extends State<EditorClienteScreen> {
           FloatingActionButton(
             heroTag: 2,
             onPressed: () async {
-              AlertDialog alert = AlertDialog(
-                content: Container(
-                  //width: 80,
-                  //height: 50,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    child: Row(
-                      children: [
-                        const CircularProgressIndicator(),
-                        Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child: const Text('Cargando...')),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              AlertDialog alert = RecursosEstaticos.alertDialogLoading;
               if (widget.cliente.id == null) {
                 if (widget.cliente.nombre.isNotEmpty &&
                     widget.cliente.apellidos.isNotEmpty) {

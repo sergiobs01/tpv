@@ -56,23 +56,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
               padding: const EdgeInsets.only(right: 10),
               child: GestureDetector(
                 onTap: () async {
-                  AlertDialog alert = AlertDialog(
-                    content: Container(
-                      //width: 80,
-                      //height: 50,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 15),
-                        child: Row(
-                          children: [
-                            const CircularProgressIndicator(),
-                            Container(
-                                margin: const EdgeInsets.only(left: 20),
-                                child: const Text('Cargando...')),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  AlertDialog alert = RecursosEstaticos.alertDialogLoading;
                   showDialog(
                     barrierDismissible: false,
                     context: context,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tpv/Actividades/EditorAlmacenScreen.dart';
 import 'package:tpv/Actividades/EditorClienteScreen.dart';
+import 'package:tpv/Clases/Descuento.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
 
 import '../Clases/Articulo.dart';
@@ -11,6 +12,7 @@ class ContainerBuilder extends StatelessWidget {
   final width;
   final Cliente cliente;
   final Articulo articulo;
+  final Descuento descuento;
   final esPar;
   final tipo;
   final bool crearDescuento;
@@ -20,6 +22,7 @@ class ContainerBuilder extends StatelessWidget {
       this.tipo,
       this.articulo,
       this.cliente,
+      this.descuento,
       this.crearDescuento});
 
   @override
@@ -88,7 +91,12 @@ class ContainerBuilder extends StatelessWidget {
                                 : width * 0.13,
                           )
                         : tipo == 3
-                            ? Container()
+                            ? SizedBox(
+                                child: Text(descuento.id.toString() + ' - ' + (descuento.clienteNom ?? 'CLIENTE SIN NOMBRE'),
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                width: width * 0.8,
+                              )
                             : tipo == 4
                                 ? Container()
                                 : tipo == 5
@@ -122,7 +130,15 @@ class ContainerBuilder extends StatelessWidget {
                                 : width * 0.21,
                           )
                         : tipo == 3
-                            ? Container()
+                            ? SizedBox(
+                                child: Text(
+                                  descuento.cantidad != null
+                                      ? descuento.cantidad.toString()
+                                      : '',
+                                  style: const TextStyle(fontSize: 12),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
                             : tipo == 4
                                 ? Container()
                                 : tipo == 5

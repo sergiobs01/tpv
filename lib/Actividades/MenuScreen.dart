@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
 import 'package:tpv/Widgets/Navigator.dart';
 
-import '../Widgets/dInkWell.dart';
+import '../Widgets/InkWellBuilder.dart';
 
 class MenuScreen extends StatelessWidget {
   @override
@@ -19,10 +19,10 @@ class MenuScreen extends StatelessWidget {
           ),
           children: RecursosEstaticos.isPCPlatform
               ? RecursosEstaticos.opcionesDisponiblesPC
-                  .map((e) => dInkWell(e, size: 26))
+                  .map((e) => InkWellBuilder(e, size: 26))
                   .toList()
               : RecursosEstaticos.opcionesDisponiblesMovil
-                  .map((e) => dInkWell(e, size: 18))
+                  .map((e) => InkWellBuilder(e, size: 18))
                   .toList()),
       drawer: NavDrawer(),
     );

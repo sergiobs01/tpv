@@ -12,7 +12,7 @@ void main() {
   RecursosEstaticos.isPCPlatform = Platform.isWindows || Platform.isLinux;
   if (RecursosEstaticos.isPCPlatform) {
     DesktopWindow.setFullScreen(true);
-    Server();
+    //Server();
   }
   runApp(MaterialApp(
       title: "App",

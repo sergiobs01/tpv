@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:tpv/Actividades/LoginScreen.dart';
 import 'package:tpv/InternalDB/DBHelper.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
@@ -34,6 +35,17 @@ class RecursosEstaticos {
   static ServerSocket socketServer;
   static bool conectado = false;
   static List<String> ip = [];
-
-
+  static final alertDialogLoading = AlertDialog(
+    content: Container(
+      margin: const EdgeInsets.only(top: 15),
+      child: Row(
+        children: [
+          const CircularProgressIndicator(),
+          Container(
+              margin: const EdgeInsets.only(left: 20),
+              child: const Text('Cargando...')),
+        ],
+      ),
+    ),
+  );
 }

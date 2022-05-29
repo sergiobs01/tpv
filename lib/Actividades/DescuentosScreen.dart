@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
 import 'package:tpv/Clases/Descuento.dart';
 
+import '../Clases/Cliente.dart';
 import '../Recursos/ManejadorEstatico.dart';
 import '../Recursos/RecursosEstaticos.dart';
+import '../Widgets/ListViewBuilder.dart';
 
 class DescuentosScreen extends StatefulWidget {
   final _busquedaController = TextEditingController();
@@ -14,7 +17,7 @@ class DescuentosScreen extends StatefulWidget {
   bool _orderbyClientNom = false;
   bool _orderbyCant = false;
 
-  DescuentosScreen({this.descuentos});
+  DescuentosScreen({@required this.descuentos});
 
   @override
   State<DescuentosScreen> createState() => _DescuentosScreenState();
@@ -31,13 +34,25 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         heroTag: 1,
-        onPressed: () {
+        onPressed: () async {
+          AlertDialog alert = RecursosEstaticos.alertDialogLoading;
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            },
+          );
+          final response = await ManejadorEstatico.getRequest('cliente');
+          List<Cliente> clientes = List<Cliente>.from(
+              json.decode(response.body).map((x) => Cliente.fromJson(x)));
           ManejadorEstatico.LanzarActividad(
               context,
               ClientesScreen(
-                clientes: [],
+                clientes: clientes,
                 crearDescuento: true,
               ));
+          Navigator.pop(context, true);
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add_rounded),
@@ -51,23 +66,7 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
               padding: const EdgeInsets.only(right: 10),
               child: GestureDetector(
                 onTap: () async {
-                  AlertDialog alert = AlertDialog(
-                    content: Container(
-                      //width: 80,
-                      //height: 50,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 15),
-                        child: Row(
-                          children: [
-                            const CircularProgressIndicator(),
-                            Container(
-                                margin: const EdgeInsets.only(left: 20),
-                                child: const Text('Cargando...')),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  AlertDialog alert = RecursosEstaticos.alertDialogLoading;
                   showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -75,12 +74,24 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                       return alert;
                     },
                   );
-                  final response =
+                  Response response =
                       await ManejadorEstatico.getRequest('descuento');
+                  List<Descuento> descuentos = List<Descuento>.from(
+                      json.decode(response.body).map((x) => Descuento.fromJson(x)));
+                  response = await ManejadorEstatico.getRequest('cliente');
+                  List<Cliente> clientes = List<Cliente>.from(
+                      json.decode(response.body).map((x) => Cliente.fromJson(x)));
                   setState(() {
-                    widget.descuentos = List<Descuento>.from(json
-                        .decode(response.body)
-                        .map((x) => Descuento.fromJson(x)));
+                    widget.descuentos = descuentos.where((descuento) {
+                      clientes.where((cliente) {
+                        if (descuento.clienteId == cliente.id) {
+                          descuento.clienteNom =
+                              cliente.nombre + ' ' + cliente.apellidos;
+                        }
+                        return true;
+                      }).toList();
+                      return true;
+                    }).toList();
                   });
                   Navigator.pop(context, true);
                 },
@@ -218,48 +229,36 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
             ),
           ),
           // Tercer elemento de la columna, una lista scrolleable con los registros
-          /*Expanded(
+          Expanded(
             child: SingleChildScrollView(
               physics: const ScrollPhysics(),
               child: Column(
                 children: <Widget>[
                   ListViewBuilder(
-                    1,
-                    articulos: widget._busquedaController.text.isEmpty
-                        ? widget.articulos
-                        : widget.articulos != null
-                            ? widget.articulos.where((articulo) {
-                                return articulo.articulo
+                    3,
+                    descuentos: widget._busquedaController.text.isEmpty
+                        ? widget.descuentos
+                        : widget.descuentos != null
+                            ? widget.descuentos.where((descuento) {
+                                return descuento.clienteNom
                                         .toString()
                                         .toLowerCase()
                                         .contains(widget
                                             ._busquedaController.text
                                             .toLowerCase()) ||
-                                    articulo.cantidad
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(widget
-                                            ._busquedaController.text
-                                            .toLowerCase()) ||
-                                    articulo.precio
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(widget
-                                            ._busquedaController.text
-                                            .toLowerCase()) ||
-                                    articulo.observaciones
+                                    descuento.cantidad
                                         .toString()
                                         .toLowerCase()
                                         .contains(widget
                                             ._busquedaController.text
                                             .toLowerCase());
                               }).toList()
-                            : widget.articulos,
+                            : widget.descuentos,
                   ),
                 ],
               ),
             ),
-          ),*/
+          ),
         ],
       ),
     );

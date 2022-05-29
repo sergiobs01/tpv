@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:tpv/Clases/Articulo.dart';
 
 import '../Clases/Cliente.dart';
+import '../Clases/Descuento.dart';
 import 'ContainerBuilder.dart';
 
 /// List view con parametros genericos
 class ListViewBuilder extends StatelessWidget {
   final tipo;
-  final clientes;
-  final articulos;
+  final List<Cliente> clientes;
+  final List<Articulo> articulos;
   final bool crearDescuento;
+  final List<Descuento> descuentos;
 
-  ListViewBuilder(this.tipo, {this.articulos, this.clientes, this.crearDescuento});
+  ListViewBuilder(this.tipo, {this.articulos, this.clientes, this.crearDescuento, this.descuentos});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,7 @@ class ListViewBuilder extends StatelessWidget {
               : tipo == 2
                   ? clientes.length
                   : tipo == 3
-                      ? 0
+                      ? descuentos.length
                       : tipo == 4
                           ? 0
                           : tipo == 5
@@ -58,6 +61,12 @@ class ListViewBuilder extends StatelessWidget {
             );
             break;
           case 3:
+            return ContainerBuilder(
+              width,
+              descuento: descuentos[index],
+              esPar: index % 2 == 0,
+              tipo: tipo,
+            );
             break;
           case 4:
             break;
