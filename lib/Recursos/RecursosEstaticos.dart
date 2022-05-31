@@ -15,6 +15,7 @@ class RecursosEstaticos {
   static String clientesLabel = 'Clientes';
   static String articuloLabel = 'Articulos';
   static String descuentoLabel = 'Descuentos';
+  static String mesasLabel = 'Mesas';
   static String filtradoLabel = 'Escriba para filtrar';
   static const wsUrl = 'http://wstpv.azurewebsites.net/api/';
   //static const wsUrl = 'https://localhost:44339/api/';
@@ -48,4 +49,5 @@ class RecursosEstaticos {
       ),
     ),
   );
+
 }

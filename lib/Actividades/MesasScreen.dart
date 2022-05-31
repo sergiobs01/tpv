@@ -3,27 +3,27 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
-import 'package:tpv/Clases/Descuento.dart';
+import 'package:tpv/Clases/Mesa.dart';
 
 import '../Clases/Cliente.dart';
 import '../Recursos/ManejadorEstatico.dart';
 import '../Recursos/RecursosEstaticos.dart';
 import '../Widgets/ListViewBuilder.dart';
 
-class DescuentosScreen extends StatefulWidget {
+class MesasScreen extends StatefulWidget {
   final _busquedaController = TextEditingController();
-  List<Descuento> descuentos;
+  List<Mesa> mesas;
 
-  bool _orderbyClientNom = false;
-  bool _orderbyCant = false;
+  bool _orderbyId = false;
+  bool _orderbyNombre = false;
 
-  DescuentosScreen({@required this.descuentos});
+  MesasScreen({@required this.mesas});
 
   @override
-  State<DescuentosScreen> createState() => _DescuentosScreenState();
+  State<MesasScreen> createState() => _MesasScreenState();
 }
 
-class _DescuentosScreenState extends State<DescuentosScreen> {
+class _MesasScreenState extends State<MesasScreen> {
   @override
   Widget build(BuildContext context) {
     // Se coge el tamaño de la pantalla para hacerlo responsive
@@ -43,7 +43,7 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
               return alert;
             },
           );
-          final response = await ManejadorEstatico.getRequest('cliente');
+          final response = await ManejadorEstatico.getRequest('m');
           List<Cliente> clientes = List<Cliente>.from(
               json.decode(response.body).map((x) => Cliente.fromJson(x)));
           Navigator.pop(context, true);
@@ -60,7 +60,7 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
       backgroundColor: Colors.white,
       // Barra superior
       appBar: AppBar(
-        title: Text(RecursosEstaticos.descuentoLabel),
+        title: Text(RecursosEstaticos.mesasLabel),
         actions: [
           Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -75,24 +75,9 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                     },
                   );
                   Response response =
-                      await ManejadorEstatico.getRequest('descuento');
-                  List<Descuento> descuentos = List<Descuento>.from(
-                      json.decode(response.body).map((x) => Descuento.fromJson(x)));
-                  response = await ManejadorEstatico.getRequest('cliente');
-                  List<Cliente> clientes = List<Cliente>.from(
-                      json.decode(response.body).map((x) => Cliente.fromJson(x)));
-                  setState(() {
-                    widget.descuentos = descuentos.where((descuento) {
-                      clientes.where((cliente) {
-                        if (descuento.clienteId == cliente.id) {
-                          descuento.clienteNom =
-                              cliente.nombre + ' ' + cliente.apellidos;
-                        }
-                        return true;
-                      }).toList();
-                      return true;
-                    }).toList();
-                  });
+                      await ManejadorEstatico.getRequest('mesa');
+                  widget.mesas = List<Mesa>.from(
+                      json.decode(response.body).map((x) => Mesa.fromJson(x)));
                   Navigator.pop(context, true);
                 },
                 child: Icon(Icons.wifi_protected_setup_rounded),
@@ -130,17 +115,17 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      widget._orderbyClientNom = !widget._orderbyClientNom;
-                      widget._orderbyCant = false;
+                      widget._orderbyId = !widget._orderbyId;
+                      widget._orderbyNombre = false;
 
-                      if (widget._orderbyClientNom) {
-                        widget.descuentos.sort((a, b) => a.clienteNom
+                      if (widget._orderbyId) {
+                        widget.mesas.sort((a, b) => a.id
                             .toString()
-                            .compareTo(b.clienteNom.toString()));
+                            .compareTo(b.id.toString()));
                       } else {
-                        widget.descuentos.sort((a, b) => b.clienteNom
+                        widget.mesas.sort((a, b) => b.id
                             .toString()
-                            .compareTo(a.clienteNom.toString()));
+                            .compareTo(a.id.toString()));
                       }
                     });
                   },
@@ -158,16 +143,16 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                         ]),
                     padding: const EdgeInsets.only(left: 5, top: 5, bottom: 5),
                     margin: const EdgeInsets.only(left: 5, top: 10, bottom: 10),
-                    width: width * 0.8,
+                    width: width * 0.187,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Nombre de cliente',
+                          'ID de mesa',
                           style: TextStyle(fontSize: 13),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        widget._orderbyClientNom
+                        widget._orderbyId
                             ? Transform.scale(
                                 scaleY: -1,
                                 child: const Icon(Icons.sort_rounded),
@@ -180,15 +165,15 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      widget._orderbyClientNom = false;
-                      widget._orderbyCant = !widget._orderbyCant;
+                      widget._orderbyId = false;
+                      widget._orderbyNombre = !widget._orderbyNombre;
 
-                      if (widget._orderbyCant) {
-                        widget.descuentos
-                            .sort((a, b) => a.cantidad.compareTo(b.cantidad));
+                      if (widget._orderbyNombre) {
+                        widget.mesas
+                            .sort((a, b) => a.nombre.compareTo(b.nombre));
                       } else {
-                        widget.descuentos
-                            .sort((a, b) => b.cantidad.compareTo(a.cantidad));
+                        widget.mesas
+                            .sort((a, b) => b.nombre.compareTo(a.nombre));
                       }
                     });
                   },
@@ -206,16 +191,16 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
                         ]),
                     padding: EdgeInsets.only(left: 5, top: 5, bottom: 5),
                     margin: EdgeInsets.only(left: 5, top: 5, bottom: 5),
-                    width: width * 0.187,
+                    width: width * 0.8,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Cantidad (%)',
+                          'Nombre',
                           style: TextStyle(fontSize: 13),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        widget._orderbyCant
+                        widget._orderbyNombre
                             ? Transform.scale(
                                 scaleY: -1,
                                 child: const Icon(Icons.sort_rounded),
@@ -235,25 +220,25 @@ class _DescuentosScreenState extends State<DescuentosScreen> {
               child: Column(
                 children: <Widget>[
                   ListViewBuilder(
-                    3,
-                    descuentos: widget._busquedaController.text.isEmpty
-                        ? widget.descuentos
-                        : widget.descuentos != null
-                            ? widget.descuentos.where((descuento) {
-                                return descuento.clienteNom
+                    4,
+                    mesas: widget._busquedaController.text.isEmpty
+                        ? widget.mesas
+                        : widget.mesas != null
+                            ? widget.mesas.where((mesa) {
+                                return mesa.id
                                         .toString()
                                         .toLowerCase()
                                         .contains(widget
                                             ._busquedaController.text
                                             .toLowerCase()) ||
-                                    descuento.cantidad
+                                    mesa.nombre
                                         .toString()
                                         .toLowerCase()
                                         .contains(widget
                                             ._busquedaController.text
                                             .toLowerCase());
                               }).toList()
-                            : widget.descuentos,
+                            : widget.mesas,
                   ),
                 ],
               ),

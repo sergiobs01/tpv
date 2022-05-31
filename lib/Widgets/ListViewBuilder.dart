@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tpv/Clases/Articulo.dart';
+import 'package:tpv/Clases/Mesa.dart';
 
 import '../Clases/Cliente.dart';
 import '../Clases/Descuento.dart';
@@ -12,8 +13,14 @@ class ListViewBuilder extends StatelessWidget {
   final List<Articulo> articulos;
   final bool crearDescuento;
   final List<Descuento> descuentos;
+  final List<Mesa> mesas;
 
-  ListViewBuilder(this.tipo, {this.articulos, this.clientes, this.crearDescuento, this.descuentos});
+  ListViewBuilder(this.tipo,
+      {this.articulos,
+      this.clientes,
+      this.crearDescuento,
+      this.descuentos,
+      this.mesas});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +41,7 @@ class ListViewBuilder extends StatelessWidget {
                   : tipo == 3
                       ? descuentos.length
                       : tipo == 4
-                          ? 0
+                          ? mesas.length
                           : tipo == 5
                               ? 0
                               : 0,
@@ -69,6 +76,12 @@ class ListViewBuilder extends StatelessWidget {
             );
             break;
           case 4:
+            return ContainerBuilder(
+              width,
+              mesa: mesas[index],
+              esPar: index % 2 == 0,
+              tipo: tipo,
+            );
             break;
           case 5:
             break;

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tpv/Actividades/EditorAlmacenScreen.dart';
 import 'package:tpv/Actividades/EditorClienteScreen.dart';
+import 'package:tpv/Actividades/EditorDescuentoScreen.dart';
+import 'package:tpv/Actividades/EditorMesasScreen.dart';
 import 'package:tpv/Clases/Descuento.dart';
+import 'package:tpv/Clases/Mesa.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
 
 import '../Clases/Articulo.dart';
@@ -13,17 +16,21 @@ class ContainerBuilder extends StatelessWidget {
   final Cliente cliente;
   final Articulo articulo;
   final Descuento descuento;
+  final Mesa mesa;
   final esPar;
   final tipo;
   final bool crearDescuento;
 
-  ContainerBuilder(this.width,
-      {this.esPar,
-      this.tipo,
-      this.articulo,
-      this.cliente,
-      this.descuento,
-      this.crearDescuento});
+  ContainerBuilder(
+    this.width, {
+    this.esPar,
+    this.tipo,
+    this.articulo,
+    this.cliente,
+    this.descuento,
+    this.crearDescuento,
+    this.mesa,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,6 @@ class ContainerBuilder extends StatelessWidget {
       child: GestureDetector(
         // AÑADE LA FUNCION EN EL CLICK DEL CLIENTE O PEDIDO
         onTap: () {
-          //print("prueba");
           switch (tipo) {
             case 0:
               // LANZA ACTIVIDAD DE NUEVO PEDIDO
@@ -49,6 +55,11 @@ class ContainerBuilder extends StatelessWidget {
             case 2:
               // LANZA ACTIVIDAD DE VER CLIENTES
               if (crearDescuento) {
+                ManejadorEstatico.LanzarActividad(
+                    context,
+                    EditorDescuentoScreen(
+                        descuento: Descuento(clienteId: cliente.id),
+                        btnAbierto: false));
               } else {
                 ManejadorEstatico.LanzarActividad(
                     context, EditorClienteScreen(cliente: cliente));
@@ -56,9 +67,15 @@ class ContainerBuilder extends StatelessWidget {
               break;
             case 3:
               // LANZA ACTIVIDAD DE VER DESCUENTOS
-
+              ManejadorEstatico.LanzarActividad(
+                  context,
+                  EditorDescuentoScreen(
+                      descuento: descuento, btnAbierto: false));
               break;
             case 4:
+              // LANZA ACTIVIDAD DE VER MESA
+              ManejadorEstatico.LanzarActividad(
+                  context, EditorMesasScreen(mesa: mesa, btnAbierto: false));
               break;
             case 5:
               break;
@@ -92,13 +109,23 @@ class ContainerBuilder extends StatelessWidget {
                           )
                         : tipo == 3
                             ? SizedBox(
-                                child: Text(descuento.id.toString() + ' - ' + (descuento.clienteNom ?? 'CLIENTE SIN NOMBRE'),
+                                child: Text(
+                                  descuento.id.toString() +
+                                      ' - ' +
+                                      (descuento.clienteNom ??
+                                          'CLIENTE SIN NOMBRE'),
                                   style: const TextStyle(fontSize: 12),
                                 ),
                                 width: width * 0.8,
                               )
                             : tipo == 4
-                                ? Container()
+                                ? SizedBox(
+                                    child: Text(
+                                      mesa.id.toString(),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    width: width * 0.187,
+                                  )
                                 : tipo == 5
                                     ? Container()
                                     : Container(),
@@ -140,7 +167,13 @@ class ContainerBuilder extends StatelessWidget {
                                 ),
                               )
                             : tipo == 4
-                                ? Container()
+                                ? SizedBox(
+                                    child: Text(
+                                      mesa.nombre ?? '',
+                                      style: const TextStyle(fontSize: 12),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 : tipo == 5
                                     ? Container()
                                     : Container(),

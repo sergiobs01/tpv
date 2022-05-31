@@ -6,11 +6,13 @@ import 'package:tpv/Actividades/AjustesScreen.dart';
 import 'package:tpv/Actividades/AlmacenScreen.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
 import 'package:tpv/Actividades/DescuentosScreen.dart';
+import 'package:tpv/Actividades/MesasScreen.dart';
 import 'package:tpv/Clases/Descuento.dart';
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
 
 import '../Clases/Articulo.dart';
 import '../Clases/Cliente.dart';
+import '../Clases/Mesa.dart';
 import '../Recursos/ManejadorEstatico.dart';
 
 class InkWellBuilder extends StatelessWidget {
@@ -156,6 +158,56 @@ class InkWellBuilder extends StatelessWidget {
 
             break;
           case 4:
+            AlertDialog alert = AlertDialog(
+              content: Container(
+                //width: 80,
+                //height: 50,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 15),
+                  child: Row(
+                    children: [
+                      const CircularProgressIndicator(),
+                      Container(
+                          margin: const EdgeInsets.only(left: 20),
+                          child: const Text('Cargando...')),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    running = false;
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            );
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return alert;
+              },
+            );
+            response = await ManejadorEstatico.getRequest('mesas');
+            List<Mesa> mesas = List<Mesa>.from(
+                json.decode(response.body).map((x) => Mesa.fromJson(x)));
+
+            mesas.where((element) {
+              print(element.id.toString() + ' - ' + element.nombre);
+              return true;
+            });
+
+            if (running) {
+              Navigator.pop(context, false);
+              ManejadorEstatico.LanzarActividad(
+                  context, MesasScreen(mesas: mesas));
+            }
             break;
           case 5:
             ManejadorEstatico.LanzarActividad(context, AjustesScreen());
