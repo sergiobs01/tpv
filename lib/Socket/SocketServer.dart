@@ -1,12 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
 
+import 'package:http/http.dart';
+import 'package:tpv/Clases/Articulo.dart';
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
 import 'package:wifi_info_flutter/wifi_info_flutter.dart';
 
+import '../Clases/Mesa.dart';
+import '../Recursos/ManejadorEstatico.dart';
+
 void Server() async {
+  // Obtiene la ip
   await getLocalIpAddress();
+  // Inicializa los pedidos
+  await initializeOrders();
   // Asigna ip y puerto
   RecursosEstaticos.socketServer =
       await ServerSocket.bind(InternetAddress.anyIPv4, 8888);
@@ -28,7 +37,7 @@ void handleConnection(Socket client) {
   client.listen(
     // Escucha los mensajes del cliente
     (Uint8List data) async {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       final message = String.fromCharCodes(data);
       if (message != '' && message != 'salir') {
         client.write('Recibido');
@@ -60,4 +69,25 @@ Future<void> getLocalIpAddress() async {
       RecursosEstaticos.ip.add(interface.name + ' - ' + addr.address);
     }
   }
+}
+
+Future<void> initializeOrders() async {
+  RecursosEstaticos.pedidos = {};
+  Response response = await ManejadorEstatico.getRequest('mesas');
+  List<Mesa> mesas =
+      List<Mesa>.from(json.decode(response.body).map((x) => Mesa.fromJson(x)));
+
+  for (Mesa m in mesas) {
+    RecursosEstaticos.pedidos[m] = [];
+  }
+
+  for(var val in RecursosEstaticos.pedidos.keys){
+    print(val.id.toString() + " - " + val.nombre);
+    if(val.id == 1){
+      RecursosEstaticos.pedidos[val].add(Articulo());
+      RecursosEstaticos.pedidos[val].add(Articulo());
+    }
+  }
+
+  print(RecursosEstaticos.pedidos);
 }

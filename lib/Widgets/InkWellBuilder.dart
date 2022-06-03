@@ -220,15 +220,43 @@ class InkWellBuilder extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(15),
         alignment: Alignment.center,
-        child: Text(
-          RecursosEstaticos.opciones[opcion],
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: size == 0 ? 18 : size,
-          ),
+        child: Stack(
+          children: [
+            Text(
+              RecursosEstaticos.opciones[opcion],
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: size == 0 ? 18 : size,
+              ),
+            ),
+            Text(
+              RecursosEstaticos.opciones[opcion],
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 1.3
+                  ..color = Colors.black,
+                fontSize: size == 0 ? 18 : size,
+              ),
+            ),
+          ],
         ),
         decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(opcion == 0
+                ? "https://cdn.icon-icons.com/icons2/1760/PNG/128/4105931-add-to-cart-buy-cart-sell-shop-shopping-cart_113919.png"
+                : opcion == 1
+                    ? "https://cdn.icon-icons.com/icons2/1936/PNG/128/warehouse_122331.png"
+                    : opcion == 2
+                        ? "https://cdn.icon-icons.com/icons2/1760/PNG/128/4105943-accounts-group-people-user-user-group-users_113923.png"
+                        : opcion == 3
+                            ? "https://cdn.icon-icons.com/icons2/1760/PNG/128/4105958-billing-cards-credit-credit-cards-debit-debit-card-payment_113939.png"
+                            : opcion == 4
+                                ? "https://cdn.icon-icons.com/icons2/2054/PNG/128/dinning_table_dinner_table_dining_room_chairs_table_icon_124435.png"
+                                : "https://cdn.icon-icons.com/icons2/1097/PNG/128/1485477019-setting_78582.png"),
+          ),
           color: Colors.blue,
           gradient: LinearGradient(
             colors: [

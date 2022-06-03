@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tpv/Actividades/LoginScreen.dart';
+import 'package:tpv/Clases/Articulo.dart';
 import 'package:tpv/InternalDB/DBHelper.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
 
+import '../Clases/Mesa.dart';
 import '../Clases/Usuario.dart';
 
 class RecursosEstaticos {
@@ -36,6 +38,7 @@ class RecursosEstaticos {
   static ServerSocket socketServer;
   static bool conectado = false;
   static List<String> ip = [];
+  static Map<Mesa, List<Articulo>> pedidos;
   static final alertDialogLoading = AlertDialog(
     content: Container(
       margin: const EdgeInsets.only(top: 15),
