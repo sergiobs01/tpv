@@ -34,11 +34,10 @@ class RecursosEstaticos {
   static var opcionesDisponiblesMovil = {0, 2, 5};
   static DBHelper Database;
   static Socket socket;
-  static List<String> respuestasCliente = [];
   static ServerSocket socketServer;
   static bool conectado = false;
   static List<String> ip = [];
-  static Map<Mesa, List<Articulo>> pedidos;
+  static Map<int, Mesa> pedidos = {};
   static final alertDialogLoading = AlertDialog(
     content: Container(
       margin: const EdgeInsets.only(top: 15),
@@ -52,5 +51,5 @@ class RecursosEstaticos {
       ),
     ),
   );
-
+  static final List<Socket> clientes = [];
 }

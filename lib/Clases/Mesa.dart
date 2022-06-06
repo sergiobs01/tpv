@@ -1,3 +1,5 @@
+import 'Articulo.dart';
+
 class Mesa {
   Mesa({
     this.id,
@@ -6,6 +8,7 @@ class Mesa {
     this.creado,
     this.borrado,
     this.error,
+    this.articulos,
   });
 
   int id;
@@ -14,6 +17,7 @@ class Mesa {
   bool creado;
   bool borrado;
   String error;
+  List<Articulo> articulos;
 
   factory Mesa.fromJson(Map<String, dynamic> json) => Mesa(
     id: json["id"],
@@ -22,6 +26,7 @@ class Mesa {
     creado: json['creado'],
     borrado: json['borrado'],
     error: json['error'],
+    articulos: List<Articulo>.from(json["articulos"].map((x) => Articulo.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +36,6 @@ class Mesa {
     'creado': creado,
     'borrado': borrado,
     'error': error,
+    'articulos': List<dynamic>.from(articulos.map((x) => x.toJson())),
   };
 }

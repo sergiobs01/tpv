@@ -30,6 +30,9 @@ class InkWellBuilder extends StatelessWidget {
         bool running = true;
         switch (opcion) {
           case 0:
+            if(!RecursosEstaticos.isPCPlatform){
+              RecursosEstaticos.socket.write('recibir');
+            }
             //ManejadorEstatico.LanzarActividad(context, Menu());
             break;
           case 1:

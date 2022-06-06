@@ -1,24 +1,34 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
 
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
 
-void Client(String ip) async {
+import '../Clases/Mesa.dart';
 
+void Client(String ip) async {
   // Conecta al socket
-  try{
+  try {
     RecursosEstaticos.socket = await Socket.connect(ip, 8888);
-    print('Conectado a: ${RecursosEstaticos.socket.remoteAddress.address}:${RecursosEstaticos.socket.remotePort}');
+    print(
+        'Conectado a: ${RecursosEstaticos.socket.remoteAddress.address}:${RecursosEstaticos.socket.remotePort}');
     RecursosEstaticos.conectado = true;
 
     // Escucha del servidor
     RecursosEstaticos.socket.listen(
-
       // Recoge los datos del server
-          (Uint8List data) {
+      (Uint8List data) {
         final serverResponse = String.fromCharCodes(data);
-        print('Server: $serverResponse');
+        //print('Server: $serverResponse');
+        List<String> response = serverResponse.split('\n');
+        for(String r in response){
+          print(r);
+          if(r.isNotEmpty){
+            Mesa m = Mesa.fromJson(json.decode(r));
+            RecursosEstaticos.pedidos[m.id] = m;
+          }
+        }
       },
 
       // Recoge los errores

@@ -25,6 +25,7 @@ void Server() async {
 
   // Escucha las conexiones de los clientes
   RecursosEstaticos.socketServer.listen((client) {
+    RecursosEstaticos.clientes.add(client);
     handleConnection(client);
   });
 }
@@ -40,8 +41,15 @@ void handleConnection(Socket client) {
       await Future.delayed(const Duration(seconds: 1));
       final message = String.fromCharCodes(data);
       if (message != '' && message != 'salir') {
-        client.write('Recibido');
-        RecursosEstaticos.respuestasCliente.add(message);
+        if(message == 'recibir'){
+          for(var val in RecursosEstaticos.pedidos.values){
+            client.writeln(json.encode(val.toJson()));
+          }
+        } else {
+          Mesa m = Mesa.fromJson(json.decode(message));
+          RecursosEstaticos.pedidos[m.id] = m;
+        }
+        //client.write('Recibido');
       } else {
         client.write('Hasta luego');
         client.close();
@@ -74,20 +82,22 @@ Future<void> getLocalIpAddress() async {
 Future<void> initializeOrders() async {
   RecursosEstaticos.pedidos = {};
   Response response = await ManejadorEstatico.getRequest('mesas');
+  //print(response.body);
   List<Mesa> mesas =
-      List<Mesa>.from(json.decode(response.body).map((x) => Mesa.fromJson(x)));
+      List<Mesa>.from(json.decode(response.body.replaceAll('}', ',"articulos":[]}')).map((x) => Mesa.fromJson(x)));
 
   for (Mesa m in mesas) {
-    RecursosEstaticos.pedidos[m] = [];
+    m.articulos = [];
+    RecursosEstaticos.pedidos[m.id] = m;
   }
 
-  for(var val in RecursosEstaticos.pedidos.keys){
+  /*for(var val in RecursosEstaticos.pedidos.keys){
     print(val.id.toString() + " - " + val.nombre);
     if(val.id == 1){
       RecursosEstaticos.pedidos[val].add(Articulo());
       RecursosEstaticos.pedidos[val].add(Articulo());
     }
-  }
+  }*/
 
   print(RecursosEstaticos.pedidos);
 }
