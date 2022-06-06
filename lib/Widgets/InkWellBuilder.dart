@@ -6,9 +6,12 @@ import 'package:tpv/Actividades/AjustesScreen.dart';
 import 'package:tpv/Actividades/AlmacenScreen.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
 import 'package:tpv/Actividades/DescuentosScreen.dart';
+import 'package:tpv/Actividades/ListaPedidosPCScreen.dart';
 import 'package:tpv/Actividades/MesasScreen.dart';
+import 'package:tpv/Actividades/SeleccionarMesaScreen.dart';
 import 'package:tpv/Clases/Descuento.dart';
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
+import 'package:tpv/Socket/SocketClient.dart';
 
 import '../Clases/Articulo.dart';
 import '../Clases/Cliente.dart';
@@ -18,9 +21,11 @@ import '../Recursos/ManejadorEstatico.dart';
 class InkWellBuilder extends StatelessWidget {
   int opcion;
   double size = 0;
+  String url;
+  Mesa mesa;
 
   //dInkWell(this._text);
-  InkWellBuilder(this.opcion, {this.size});
+  InkWellBuilder(this.opcion, {this.size, this.url, this.mesa});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +35,79 @@ class InkWellBuilder extends StatelessWidget {
         bool running = true;
         switch (opcion) {
           case 0:
-            if(!RecursosEstaticos.isPCPlatform){
-              RecursosEstaticos.socket.write('recibir');
+            AlertDialog alert;
+            if (!RecursosEstaticos.isPCPlatform) {
+              if (RecursosEstaticos.conectado) {
+                alert = AlertDialog(
+                  content: Container(
+                    //width: 80,
+                    //height: 50,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 15),
+                      child: Row(
+                        children: [
+                          const CircularProgressIndicator(),
+                          Container(
+                              margin: const EdgeInsets.only(left: 20),
+                              child: const Text('Cargando...')),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        running = false;
+                        Navigator.pop(context, false);
+                      },
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                );
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+                await sendMessage('recibir');
+                if (running) {
+                  Navigator.pop(context, false);
+                  ManejadorEstatico.LanzarActividad(
+                      context, SeleccionarMesaScreen());
+                }
+              } else {
+                alert = AlertDialog(
+                  content: const Text(
+                      'Hace falta una conexión directa con un PC para hacer funcionar esta funcion.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                      child: const Text(
+                        'Aceptar',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                );
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+              }
+            } else {
+              ManejadorEstatico.LanzarActividad(
+                  context, SeleccionarMesaScreen());
             }
-            //ManejadorEstatico.LanzarActividad(context, Menu());
             break;
           case 1:
             AlertDialog alert = RecursosEstaticos.alertDialogLoading;
@@ -215,6 +289,11 @@ class InkWellBuilder extends StatelessWidget {
           case 5:
             ManejadorEstatico.LanzarActividad(context, AjustesScreen());
             break;
+          case 6:
+            if(RecursosEstaticos.isPCPlatform){
+              ManejadorEstatico.LanzarActividad(context, ListaPedidosPCScreen(mesa: mesa,));
+            }
+            break;
           default:
             break;
         }
@@ -226,7 +305,7 @@ class InkWellBuilder extends StatelessWidget {
         child: Stack(
           children: [
             Text(
-              RecursosEstaticos.opciones[opcion],
+              mesa == null ? RecursosEstaticos.opciones[opcion] : mesa.nombre,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -234,7 +313,7 @@ class InkWellBuilder extends StatelessWidget {
               ),
             ),
             Text(
-              RecursosEstaticos.opciones[opcion],
+              mesa == null ? RecursosEstaticos.opciones[opcion] : mesa.nombre,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 foreground: Paint()
@@ -248,7 +327,7 @@ class InkWellBuilder extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(opcion == 0
+            image: NetworkImage(url != null ? url : opcion == 0
                 ? "https://cdn.icon-icons.com/icons2/1760/PNG/128/4105931-add-to-cart-buy-cart-sell-shop-shopping-cart_113919.png"
                 : opcion == 1
                     ? "https://cdn.icon-icons.com/icons2/1936/PNG/128/warehouse_122331.png"

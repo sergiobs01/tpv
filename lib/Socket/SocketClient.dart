@@ -7,7 +7,7 @@ import 'package:tpv/Recursos/RecursosEstaticos.dart';
 
 import '../Clases/Mesa.dart';
 
-void Client(String ip) async {
+void connectClient(String ip) async {
   // Conecta al socket
   try {
     RecursosEstaticos.socket = await Socket.connect(ip, 8888);
@@ -29,6 +29,7 @@ void Client(String ip) async {
             RecursosEstaticos.pedidos[m.id] = m;
           }
         }
+        print(RecursosEstaticos.pedidos);
       },
 
       // Recoge los errores
@@ -51,5 +52,5 @@ void Client(String ip) async {
 Future<void> sendMessage(String message) async {
   print('Enviado: $message');
   RecursosEstaticos.socket.write(message);
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(const Duration(seconds: 2));
 }

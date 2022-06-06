@@ -14,13 +14,15 @@ class ListViewBuilder extends StatelessWidget {
   final bool crearDescuento;
   final List<Descuento> descuentos;
   final List<Mesa> mesas;
+  final Mesa mesa;
 
   ListViewBuilder(this.tipo,
       {this.articulos,
       this.clientes,
       this.crearDescuento,
       this.descuentos,
-      this.mesas});
+      this.mesas,
+      this.mesa});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class ListViewBuilder extends StatelessWidget {
     // Ancho de la pantalla
     var width = size.width;
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       // Mostrará tantos items como registros haya devuelto la consulta
       itemCount: tipo == 0
@@ -43,7 +45,7 @@ class ListViewBuilder extends StatelessWidget {
                       : tipo == 4
                           ? mesas.length
                           : tipo == 5
-                              ? 0
+                              ? mesa.articulos.length
                               : 0,
       itemBuilder: (context, index) {
         // Si la posición del registro es par, se mostrará con fondo blanco
@@ -84,6 +86,12 @@ class ListViewBuilder extends StatelessWidget {
             );
             break;
           case 5:
+            return ContainerBuilder(
+              width,
+              mesa: mesa,
+              articulo: mesa.articulos[index],
+              tipo: tipo,
+            );
             break;
         }
         return Text("ERROR");

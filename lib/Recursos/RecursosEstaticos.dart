@@ -17,6 +17,8 @@ class RecursosEstaticos {
   static String clientesLabel = 'Clientes';
   static String articuloLabel = 'Articulos';
   static String descuentoLabel = 'Descuentos';
+  static String listapedidos = 'Pedido';
+  static String seleccion = 'Selección de mesa';
   static String mesasLabel = 'Mesas';
   static String filtradoLabel = 'Escriba para filtrar';
   static const wsUrl = 'http://wstpv.azurewebsites.net/api/';
@@ -52,4 +54,6 @@ class RecursosEstaticos {
     ),
   );
   static final List<Socket> clientes = [];
+
+
 }

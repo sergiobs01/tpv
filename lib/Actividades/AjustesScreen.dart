@@ -358,7 +358,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
                                     if (_clientController.text.isNotEmpty) {
                                       String ipCompleta =
                                           _clientController.text;
-                                      await Client(ipCompleta);
+                                      await connectClient(ipCompleta);
                                       if (!RecursosEstaticos.conectado) {
                                         AlertDialog dialog = AlertDialog(
                                           title: const Text('Error'),

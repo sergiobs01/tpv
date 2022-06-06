@@ -127,7 +127,13 @@ class ContainerBuilder extends StatelessWidget {
                                     width: width * 0.187,
                                   )
                                 : tipo == 5
-                                    ? Container()
+                                    ? SizedBox(
+                                        child: Text(
+                                          articulo.articulo,
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        width: width * 0.187,
+                                      )
                                     : Container(),
             tipo == 0
                 ? const Expanded(
@@ -175,7 +181,17 @@ class ContainerBuilder extends StatelessWidget {
                                     ),
                                   )
                                 : tipo == 5
-                                    ? Container()
+                                    ? Row(
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {},
+                                              child: const Text('+')),
+                                          Text(articulo.cantidad.toString()),
+                                          ElevatedButton(
+                                              onPressed: () {},
+                                              child: const Text('-')),
+                                        ],
+                                      )
                                     : Container(),
             tipo == 0
                 ? Container()
