@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
+import 'package:tpv/Actividades/EditorMesasScreen.dart';
 import 'package:tpv/Clases/Mesa.dart';
 
 import '../Clases/Cliente.dart';
@@ -34,25 +35,9 @@ class _MesasScreenState extends State<MesasScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         heroTag: 1,
-        onPressed: () async {
-          AlertDialog alert = RecursosEstaticos.alertDialogLoading;
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return alert;
-            },
-          );
-          final response = await ManejadorEstatico.getRequest('m');
-          List<Cliente> clientes = List<Cliente>.from(
-              json.decode(response.body).map((x) => Cliente.fromJson(x)));
-          Navigator.pop(context, true);
+        onPressed: () {
           ManejadorEstatico.LanzarActividad(
-              context,
-              ClientesScreen(
-                clientes: clientes,
-                crearDescuento: true,
-              ));
+              context, EditorMesasScreen(mesa: Mesa(), btnAbierto: false));
         },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add_rounded),
@@ -75,9 +60,13 @@ class _MesasScreenState extends State<MesasScreen> {
                     },
                   );
                   Response response =
-                      await ManejadorEstatico.getRequest('mesa');
-                  widget.mesas = List<Mesa>.from(
-                      json.decode(response.body).map((x) => Mesa.fromJson(x)));
+                      await ManejadorEstatico.getRequest('mesas');
+                  setState(() {
+                    widget.mesas = List<Mesa>.from(json
+                        .decode(
+                            response.body.replaceAll('}', ',"articulos":[]}'))
+                        .map((x) => Mesa.fromJson(x)));
+                  });
                   Navigator.pop(context, true);
                 },
                 child: Icon(Icons.wifi_protected_setup_rounded),
@@ -119,13 +108,11 @@ class _MesasScreenState extends State<MesasScreen> {
                       widget._orderbyNombre = false;
 
                       if (widget._orderbyId) {
-                        widget.mesas.sort((a, b) => a.id
-                            .toString()
-                            .compareTo(b.id.toString()));
+                        widget.mesas.sort((a, b) =>
+                            a.id.toString().compareTo(b.id.toString()));
                       } else {
-                        widget.mesas.sort((a, b) => b.id
-                            .toString()
-                            .compareTo(a.id.toString()));
+                        widget.mesas.sort((a, b) =>
+                            b.id.toString().compareTo(a.id.toString()));
                       }
                     });
                   },
