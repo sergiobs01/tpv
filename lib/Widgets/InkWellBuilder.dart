@@ -6,6 +6,7 @@ import 'package:tpv/Actividades/AjustesScreen.dart';
 import 'package:tpv/Actividades/AlmacenScreen.dart';
 import 'package:tpv/Actividades/ClientesScreen.dart';
 import 'package:tpv/Actividades/DescuentosScreen.dart';
+import 'package:tpv/Actividades/ListaPedidosMovilScreen.dart';
 import 'package:tpv/Actividades/ListaPedidosPCScreen.dart';
 import 'package:tpv/Actividades/MesasScreen.dart';
 import 'package:tpv/Actividades/SeleccionarMesaScreen.dart';
@@ -272,8 +273,7 @@ class InkWellBuilder extends StatelessWidget {
               },
             );
             response = await ManejadorEstatico.getRequest('mesas');
-            List<Mesa> mesas = List<Mesa>.from(
-                json.decode(response.body).map((x) => Mesa.fromJson(x)));
+            List<Mesa> mesas = List<Mesa>.from(json.decode(response.body.replaceAll('}', ',"articulos":[]}')).map((x) => Mesa.fromJson(x)));
 
             mesas.where((element) {
               print(element.id.toString() + ' - ' + element.nombre);
@@ -290,8 +290,23 @@ class InkWellBuilder extends StatelessWidget {
             ManejadorEstatico.LanzarActividad(context, AjustesScreen());
             break;
           case 6:
+            AlertDialog alert = RecursosEstaticos.alertDialogLoading;
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return alert;
+              },
+            );
+            final response = await ManejadorEstatico.getRequest('almacen');
+            List<Articulo> articulos = List<Articulo>.from(
+                json.decode(response.body).map((x) => Articulo.fromJson(x)));
+            Navigator.pop(context, true);
+
             if(RecursosEstaticos.isPCPlatform){
-              ManejadorEstatico.LanzarActividad(context, ListaPedidosPCScreen(mesa: mesa,));
+              ManejadorEstatico.LanzarActividad(context, ListaPedidosPCScreen(mesa: mesa, articulos: articulos,));
+            } else {
+              ManejadorEstatico.LanzarActividad(context, ListaPedidosMovilScreen(mesa: mesa, articulos: articulos,));
             }
             break;
           default:

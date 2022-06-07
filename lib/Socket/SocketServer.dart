@@ -51,7 +51,7 @@ void handleConnection(Socket client) {
         }
         //client.write('Recibido');
       } else {
-        client.write('Hasta luego');
+        //client.write('Hasta luego');
         client.close();
       }
     },

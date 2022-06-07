@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:tpv/Clases/Descuento.dart';
 
 import '../Clases/Mesa.dart';
+import '../Recursos/RecursosEstaticos.dart';
 import '../Widgets/Delimitadores.dart';
 
 class DetallesPedidoScreen extends StatelessWidget {
@@ -147,7 +148,13 @@ class DetallesPedidoScreen extends StatelessWidget {
                 width: 170,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    RecursosEstaticos.pedidos[mesa.id].articulos = [];
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                   child: const Text(
                     'Volver al menú',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

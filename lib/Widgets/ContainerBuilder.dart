@@ -96,24 +96,21 @@ class ContainerBuilder extends StatelessWidget {
                                 .decode(response.body)
                                 .map((x) => Articulo.fromJson(x)));
 
+                            print('Articulos: ' + articulos.length.toString());
+
                             for (Descuento c in descuentos) {
+                              print('Descuento ID: ' + c.id.toString());
                               await ManejadorEstatico.deleteRequest(
                                   'descuento', c.id);
                             }
 
                             for (Articulo a in mesa.articulos) {
-                              await ManejadorEstatico.postRequest('venta', {
-                                'usuario': RecursosEstaticos.usuario.usuario,
-                                'cliente_id': cliente.id,
-                                'articulo_id': a.id,
-                                'mesa_id': mesa.id,
-                                'cantidad': a.cantidad,
-                                'dia_venta': DateTime.now().toString(),
-                                'observaciones': tarjeta
-                                    ? 'Pago con tarjeta'
-                                    : 'Pago en efectivo',
-                              });
-
+                              print('Cantidad restante: ' +
+                                  (articulos
+                                              .elementAt(articulos.indexOf(a))
+                                              .cantidad -
+                                          a.cantidad)
+                                      .toString());
                               await ManejadorEstatico.putRequest('almacen', {
                                 'id': a.id,
                                 'articulo': articulos
@@ -133,6 +130,17 @@ class ContainerBuilder extends StatelessWidget {
                                     .elementAt(articulos.indexOf(a))
                                     .observaciones,
                               });
+                              await ManejadorEstatico.postRequest('venta', {
+                                'usuario': RecursosEstaticos.usuario.usuario,
+                                'cliente_id': cliente.id,
+                                'articulo_id': a.id,
+                                'mesa_id': mesa.id,
+                                'cantidad': a.cantidad,
+                                'dia_venta': DateTime.now().toString(),
+                                'observaciones': tarjeta
+                                    ? 'Pago con tarjeta'
+                                    : 'Pago en efectivo',
+                              });
                             }
 
                             Navigator.pop(context, true);
@@ -147,16 +155,69 @@ class ContainerBuilder extends StatelessWidget {
                           },
                           child: const Text('Aceptar')),
                       TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             //Cargar pantalla pedido
                             Navigator.pop(context);
+                            showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    RecursosEstaticos.alertDialogLoading);
+
+                            Response response =
+                                await ManejadorEstatico.getRequest('almacen');
+                            List<Articulo> articulos = List<Articulo>.from(json
+                                .decode(response.body)
+                                .map((x) => Articulo.fromJson(x)));
+
+                            for (Articulo a in mesa.articulos) {
+                              print('Cantidad restante: ' +
+                                  (articulos
+                                              .elementAt(articulos.indexOf(a))
+                                              .cantidad -
+                                          a.cantidad)
+                                      .toString());
+                              await ManejadorEstatico.putRequest('almacen', {
+                                'id': a.id,
+                                'articulo': articulos
+                                    .elementAt(articulos.indexOf(a))
+                                    .articulo,
+                                'cantidad': articulos
+                                        .elementAt(articulos.indexOf(a))
+                                        .cantidad -
+                                    a.cantidad,
+                                'precio': articulos
+                                    .elementAt(articulos.indexOf(a))
+                                    .precio,
+                                'url': articulos
+                                    .elementAt(articulos.indexOf(a))
+                                    .url,
+                                'observaciones': articulos
+                                    .elementAt(articulos.indexOf(a))
+                                    .observaciones,
+                              });
+                              await ManejadorEstatico.postRequest('venta', {
+                                'usuario': RecursosEstaticos.usuario.usuario,
+                                'cliente_id': cliente.id,
+                                'articulo_id': a.id,
+                                'mesa_id': mesa.id,
+                                'cantidad': a.cantidad,
+                                'dia_venta': DateTime.now().toString(),
+                                'observaciones': tarjeta
+                                    ? 'Pago con tarjeta'
+                                    : 'Pago en efectivo',
+                              });
+                            }
+
+                            Navigator.pop(context, true);
+
                             ManejadorEstatico.LanzarActividad(
-                                context,
-                                DetallesPedidoScreen(
-                                  mesa: mesa,
-                                  tarjeta: tarjeta,
-                                  descuentos: [],
-                                ));
+                              context,
+                              DetallesPedidoScreen(
+                                mesa: mesa,
+                                tarjeta: tarjeta,
+                                descuentos: [],
+                              ),
+                            );
                           },
                           child: const Text('Cancelar')),
                     ],
@@ -164,13 +225,66 @@ class ContainerBuilder extends StatelessWidget {
                   showDialog(context: context, builder: (context) => alert);
                 } else {
                   // Cargar pantalla pedido
+                  showDialog(
+                      context: context,
+                      builder: (context) =>
+                      RecursosEstaticos.alertDialogLoading);
+
+                  Response response =
+                  await ManejadorEstatico.getRequest('almacen');
+                  List<Articulo> articulos = List<Articulo>.from(json
+                      .decode(response.body)
+                      .map((x) => Articulo.fromJson(x)));
+
+                  for (Articulo a in mesa.articulos) {
+                    print('Cantidad restante: ' +
+                        (articulos
+                            .elementAt(articulos.indexOf(a))
+                            .cantidad -
+                            a.cantidad)
+                            .toString());
+                    await ManejadorEstatico.putRequest('almacen', {
+                      'id': a.id,
+                      'articulo': articulos
+                          .elementAt(articulos.indexOf(a))
+                          .articulo,
+                      'cantidad': articulos
+                          .elementAt(articulos.indexOf(a))
+                          .cantidad -
+                          a.cantidad,
+                      'precio': articulos
+                          .elementAt(articulos.indexOf(a))
+                          .precio,
+                      'url': articulos
+                          .elementAt(articulos.indexOf(a))
+                          .url,
+                      'observaciones': articulos
+                          .elementAt(articulos.indexOf(a))
+                          .observaciones,
+                    });
+                    await ManejadorEstatico.postRequest('venta', {
+                      'usuario': RecursosEstaticos.usuario.usuario,
+                      'cliente_id': cliente.id,
+                      'articulo_id': a.id,
+                      'mesa_id': mesa.id,
+                      'cantidad': a.cantidad,
+                      'dia_venta': DateTime.now().toString(),
+                      'observaciones': tarjeta
+                          ? 'Pago con tarjeta'
+                          : 'Pago en efectivo',
+                    });
+                  }
+
+                  Navigator.pop(context, true);
+
                   ManejadorEstatico.LanzarActividad(
-                      context,
-                      DetallesPedidoScreen(
-                        mesa: mesa,
-                        tarjeta: tarjeta,
-                        descuentos: [],
-                      ));
+                    context,
+                    DetallesPedidoScreen(
+                      mesa: mesa,
+                      tarjeta: tarjeta,
+                      descuentos: [],
+                    ),
+                  );
                 }
                 print(descuentos.length);
               } else {
