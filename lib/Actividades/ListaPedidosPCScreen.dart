@@ -468,7 +468,66 @@ class _ListaPedidosPCScreenState extends State<ListaPedidosPCScreen> {
                         width: width * 0.25,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(20),
-                          onTap: () {},
+                          onTap: () {
+                            if (widget.mesa.articulos.isNotEmpty) {
+                              AlertDialog alert = AlertDialog(
+                                content: const Text(
+                                    'Va a proceder a seleccionar un cliente, ¿desea continuar?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        AlertDialog alert = RecursosEstaticos
+                                            .alertDialogLoading;
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) => alert);
+                                        Response response =
+                                            await ManejadorEstatico.getRequest(
+                                                'cliente');
+                                        List<Cliente> clientes =
+                                            List<Cliente>.from(json
+                                                .decode(response.body)
+                                                .map((x) =>
+                                                    Cliente.fromJson(x)));
+                                        Navigator.pop(context);
+                                        ManejadorEstatico.LanzarActividad(
+                                            context,
+                                            ClientesScreen(
+                                                clientes: clientes,
+                                                crearDescuento: false,
+                                                finalizarVenta: true,
+                                                tarjeta: false,
+                                                mesa: widget.mesa));
+                                      },
+                                      child: const Text('Aceptar')),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancelar')),
+                                ],
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => alert);
+                            } else {
+                              AlertDialog alert = AlertDialog(
+                                content:
+                                    const Text('No hay productos que facturar'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Aceptar')),
+                                ],
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => alert);
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(15),
                             alignment: Alignment.center,

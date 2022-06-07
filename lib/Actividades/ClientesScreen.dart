@@ -358,6 +358,7 @@ class _ClientesScreenState extends State<ClientesScreen> {
                             : widget.clientes,
                     crearDescuento: widget.crearDescuento,
                     finalizarVenta: widget.finalizarVenta,
+                    tarjeta: widget.tarjeta,
                     mesa: widget.mesa,
                   ),
                 ],
