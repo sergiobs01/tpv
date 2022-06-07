@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:tpv/Actividades/EditorAlmacenScreen.dart';
 import 'package:tpv/Actividades/EditorClienteScreen.dart';
 import 'package:tpv/Actividades/EditorDescuentoScreen.dart';
@@ -20,6 +23,8 @@ class ContainerBuilder extends StatelessWidget {
   final esPar;
   final tipo;
   final bool crearDescuento;
+  final bool finalizarVenta;
+  final bool tarjeta;
 
   ContainerBuilder(
     this.width, {
@@ -30,6 +35,8 @@ class ContainerBuilder extends StatelessWidget {
     this.descuento,
     this.crearDescuento,
     this.mesa,
+    this.finalizarVenta,
+    this.tarjeta,
   });
 
   @override
@@ -42,7 +49,7 @@ class ContainerBuilder extends StatelessWidget {
       // Contiene una fila que mostrará los distintos campos de un mismo registro en SizedBoxes
       child: GestureDetector(
         // AÑADE LA FUNCION EN EL CLICK DEL CLIENTE O PEDIDO
-        onTap: () {
+        onTap: () async {
           switch (tipo) {
             case 0:
               // LANZA ACTIVIDAD DE NUEVO PEDIDO
@@ -54,15 +61,53 @@ class ContainerBuilder extends StatelessWidget {
               break;
             case 2:
               // LANZA ACTIVIDAD DE VER CLIENTES
-              if (crearDescuento) {
-                ManejadorEstatico.LanzarActividad(
-                    context,
-                    EditorDescuentoScreen(
-                        descuento: Descuento(clienteId: cliente.id),
-                        btnAbierto: false));
+              if (finalizarVenta) {
+                // Buscar descuentos
+                // Llevo mesa
+                AlertDialog alert;
+                showDialog(
+                    context: context,
+                    builder: (context) => RecursosEstaticos.alertDialogLoading);
+                Response response = await ManejadorEstatico.getRequest(
+                    'descuento',
+                    id: cliente.id);
+                List<Descuento> descuentos = List<Descuento>.from(json
+                    .decode(response.body)
+                    .map((x) => Descuento.fromJson(x)));
+                Navigator.pop(context);
+                if (descuentos.isNotEmpty) {
+                  alert = AlertDialog(
+                    content: const Text(
+                        'Hay descuentos asociados al cliente, ¿desea usarlos?'),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            //Cargar pantalla pedido
+                          },
+                          child: const Text('Aceptar')),
+                      TextButton(
+                          onPressed: () {
+                            //Cargar pantalla pedido
+                          },
+                          child: const Text('Cancelar')),
+                    ],
+                  );
+                  showDialog(context: context, builder: (context) => alert);
+                } else {
+                  // Cargar pantalla pedido
+                }
+                print(descuentos.length);
               } else {
-                ManejadorEstatico.LanzarActividad(
-                    context, EditorClienteScreen(cliente: cliente));
+                if (crearDescuento) {
+                  ManejadorEstatico.LanzarActividad(
+                      context,
+                      EditorDescuentoScreen(
+                          descuento: Descuento(clienteId: cliente.id),
+                          btnAbierto: false));
+                } else {
+                  ManejadorEstatico.LanzarActividad(
+                      context, EditorClienteScreen(cliente: cliente));
+                }
               }
               break;
             case 3:

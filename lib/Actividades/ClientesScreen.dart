@@ -5,6 +5,7 @@ import 'package:tpv/Clases/Cliente.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
 import 'package:tpv/Recursos/RecursosEstaticos.dart';
 
+import '../Clases/Mesa.dart';
 import '../Widgets/ListViewBuilder.dart';
 import 'EditorClienteScreen.dart';
 
@@ -17,8 +18,11 @@ class ClientesScreen extends StatefulWidget {
   bool _orderbyApellido = false;
   bool _orderbyEmail = false;
   bool crearDescuento;
+  bool finalizarVenta;
+  bool tarjeta;
+  Mesa mesa;
 
-  ClientesScreen({this.clientes, this.crearDescuento});
+  ClientesScreen({this.clientes, this.crearDescuento, this.finalizarVenta, this.mesa, this.tarjeta});
 
   @override
   State<ClientesScreen> createState() => _ClientesScreenState();
@@ -27,13 +31,16 @@ class ClientesScreen extends StatefulWidget {
 class _ClientesScreenState extends State<ClientesScreen> {
   @override
   Widget build(BuildContext context) {
+    widget.mesa ??= Mesa();
+    widget.finalizarVenta ??= false;
+    widget.tarjeta ??= false;
     // Se coge el tamaño de la pantalla para hacerlo responsive
     var size = MediaQuery.of(context).size;
     // Ancho de la pantalla
     var width = size.width;
     // Carga el widget ListadoPedidos que está en el archivo Widgets
     return Scaffold(
-      floatingActionButton: !widget.crearDescuento
+      floatingActionButton: !widget.crearDescuento && !widget.finalizarVenta
           ? FloatingActionButton(
         heroTag: 1,
               onPressed: () {
@@ -350,6 +357,8 @@ class _ClientesScreenState extends State<ClientesScreen> {
                               }).toList()
                             : widget.clientes,
                     crearDescuento: widget.crearDescuento,
+                    finalizarVenta: widget.finalizarVenta,
+                    mesa: widget.mesa,
                   ),
                 ],
               ),

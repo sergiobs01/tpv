@@ -190,7 +190,8 @@ class ManejadorEstatico {
   }
 
   // METODO RECOGEDOR GET
-  static Future<http.Response> getRequest(String url, {Map body, int id}) async {
+  static Future<http.Response> getRequest(String url,
+      {Map body, int id}) async {
     url == 'login'
         ? url = RecursosEstaticos.wsUrl +
             url +
@@ -198,7 +199,10 @@ class ManejadorEstatico {
             body['usuario'] +
             '&contrasena=' +
             body['contrasena']
-        : url = RecursosEstaticos.wsUrl + url;
+        : id == null
+            ? url = RecursosEstaticos.wsUrl + url
+            : url = RecursosEstaticos.wsUrl + url + '/' + id.toString();
+
     var response = await http.get(
       url,
       headers: {"Content-Type": "application/json"},

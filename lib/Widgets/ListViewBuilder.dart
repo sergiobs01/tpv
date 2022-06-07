@@ -15,14 +15,20 @@ class ListViewBuilder extends StatelessWidget {
   final List<Descuento> descuentos;
   final List<Mesa> mesas;
   final Mesa mesa;
+  final bool finalizarVenta;
+  final bool tarjeta;
 
-  ListViewBuilder(this.tipo,
-      {this.articulos,
-      this.clientes,
-      this.crearDescuento,
-      this.descuentos,
-      this.mesas,
-      this.mesa});
+  ListViewBuilder(
+    this.tipo, {
+    this.articulos,
+    this.clientes,
+    this.crearDescuento,
+    this.descuentos,
+    this.mesas,
+    this.mesa,
+    this.finalizarVenta,
+    this.tarjeta,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +73,9 @@ class ListViewBuilder extends StatelessWidget {
               esPar: index % 2 == 0,
               tipo: tipo,
               crearDescuento: crearDescuento,
+              finalizarVenta: finalizarVenta,
+              mesa: mesa,
+              tarjeta: tarjeta,
             );
             break;
           case 3:

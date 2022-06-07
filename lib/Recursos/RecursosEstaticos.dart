@@ -17,7 +17,7 @@ class RecursosEstaticos {
   static String clientesLabel = 'Clientes';
   static String articuloLabel = 'Articulos';
   static String descuentoLabel = 'Descuentos';
-  static String listapedidos = 'Pedido';
+  static String listapedidos = 'Pedido de ';
   static String seleccion = 'Selección de mesa';
   static String mesasLabel = 'Mesas';
   static String filtradoLabel = 'Escriba para filtrar';

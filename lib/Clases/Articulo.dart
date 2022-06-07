@@ -23,6 +23,12 @@ class Articulo {
   bool borrado;
   String error;
 
+  @override
+  bool operator ==(Object other) => (other is Articulo) && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   factory Articulo.fromJson(Map<String, dynamic> json) => Articulo(
         id: json['id'],
         articulo: json['articulo'],
