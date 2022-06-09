@@ -303,6 +303,8 @@ class InkWellBuilder extends StatelessWidget {
                 json.decode(response.body).map((x) => Articulo.fromJson(x)));
             Navigator.pop(context, true);
 
+            print(articulos.length);
+
             if(RecursosEstaticos.isPCPlatform){
               ManejadorEstatico.LanzarActividad(context, ListaPedidosPCScreen(mesa: mesa, articulos: articulos,));
             } else {

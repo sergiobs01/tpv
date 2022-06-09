@@ -51,7 +51,7 @@ class _EditorMesasScreenState extends State<EditorMesasScreen> {
                           'nombre': widget.mesa.nombre,
                         });
                         Navigator.pop(context, true);
-                        Mesa c = Mesa.fromJson(jsonDecode(r.body));
+                        Mesa c = Mesa.fromJson(jsonDecode(r.body.replaceAll('}', ',"articulos":[]}')));
 
                         if (c.error.isNotEmpty) {
                           alert = AlertDialog(
@@ -129,7 +129,7 @@ class _EditorMesasScreenState extends State<EditorMesasScreen> {
                       Response r = await ManejadorEstatico.deleteRequest(
                           'mesas', widget.mesa.id);
                       Navigator.pop(context, true);
-                      Mesa c = Mesa.fromJson(jsonDecode(r.body));
+                      Mesa c = Mesa.fromJson(jsonDecode(r.body.replaceAll('}', ',"articulos":[]}')));
 
                       if (c.error.isNotEmpty) {
                         alert = AlertDialog(
@@ -188,7 +188,7 @@ class _EditorMesasScreenState extends State<EditorMesasScreen> {
                     'nombre': widget.mesa.nombre,
                   });
                   Navigator.pop(context, true);
-                  Mesa c = Mesa.fromJson(jsonDecode(r.body));
+                  Mesa c = Mesa.fromJson(jsonDecode(r.body.replaceAll('}', ',"articulos":[]}')));
 
                   if (c.error.isNotEmpty) {
                     alert = AlertDialog(

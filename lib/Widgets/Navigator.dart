@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tpv/Recursos/ManejadorEstatico.dart';
 
+import '../Actividades/AcercaDeScreen.dart';
 import '../Actividades/AjustesScreen.dart';
+import '../Actividades/AyudaScreen.dart';
 import '../Actividades/LoginScreen.dart';
 import '../Recursos/RecursosEstaticos.dart';
 import 'Delimitadores.dart';
@@ -45,6 +47,22 @@ class NavDrawer extends StatelessWidget {
               title: const Text('Ajustes'),
               onTap: () =>
                   {ManejadorEstatico.LanzarActividad(context, AjustesScreen())},
+            ),
+            Space(),
+            // Muestra la informacion
+            Header("Informacion"),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Ayuda'),
+              onTap: () =>
+                  {ManejadorEstatico.LanzarActividad(context, AyudaScreen())},
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Acerca de'),
+              onTap: () => {
+                ManejadorEstatico.LanzarActividad(context, AcercaDeScreen())
+              },
             ),
             Space(),
             // Muestra salida
